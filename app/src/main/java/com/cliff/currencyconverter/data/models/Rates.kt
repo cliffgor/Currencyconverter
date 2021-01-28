@@ -32,5 +32,6 @@ data class Rates(
     val THB: Double,
     val TRY: Double,
     val USD: Double,
-    val ZAR: Double
+    val ZAR: Double,
+    val EUR: Double,
 )
