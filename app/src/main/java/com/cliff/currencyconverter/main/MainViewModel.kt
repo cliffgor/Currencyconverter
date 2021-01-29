@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.time.temporal.TemporalAmount
+import kotlin.math.round
 
 class MainViewModel @ViewModelInject constructor(
     private val repository: MainRepository,
@@ -45,6 +46,15 @@ class MainViewModel @ViewModelInject constructor(
                 is Resource.Error -> _conversion.value = CurrencyEvent.Failiure(ratesResponse.message!!)
                 is Resource.Success -> {
                     val rates = ratesResponse.data!!.rates
+                    val rate = getRateForCurrency(toCurrency, rates)
+                    if(rate == null) {
+                        _conversion.value = CurrencyEvent.Failiure("Unexpected Error")
+                    } else {
+                        val convertedCurrency = round(fromAmount * rate * 100) /100
+                        _conversion.value = CurrencyEvent.Success(
+                            "$fromAmount $fromCurrency = $convertedCurrency $toCurrency"
+                        )
+                    }
                 }
             }
         }
